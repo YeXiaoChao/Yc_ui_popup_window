@@ -65,7 +65,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			// 隐藏窗口，如果设置了点击窗口外消失，则不需要此方式隐藏
 			pop.dismiss();
 		} else {
-			// 弹出窗口显示内容视图,默认以锚定视图的左下角为起点，这里为点击按钮
+			// 显示窗口，位置为父容器底部
 			pop.showAtLocation(hideView, Gravity.BOTTOM, 0, 0);
 		}
 		return super.onCreateOptionsMenu(menu);
