@@ -4,6 +4,8 @@ int anim abc_slide_in_bottom 0x7f040002
 int anim abc_slide_in_top 0x7f040003
 int anim abc_slide_out_bottom 0x7f040004
 int anim abc_slide_out_top 0x7f040005
+int anim menu_fadein 0x7f040006
+int anim menu_fadeout 0x7f040007
 int attr actionBarDivider 0x7f01000b
 int attr actionBarItemBackground 0x7f01000c
 int attr actionBarSize 0x7f01000a
@@ -253,10 +255,10 @@ int id action_mode_close_button 0x7f050022
 int id activity_chooser_view_content 0x7f050023
 int id always 0x7f05000b
 int id beginning 0x7f050011
-int id btnCancel 0x7f050046
-int id btnExit 0x7f050045
-int id btnNight 0x7f050043
-int id btnWord 0x7f050044
+int id btnCancel 0x7f050047
+int id btnExit 0x7f050046
+int id btnNight 0x7f050044
+int id btnWord 0x7f050045
 int id checkbox 0x7f05002b
 int id collapseActionView 0x7f05000d
 int id default_activity_button 0x7f050026
@@ -276,6 +278,7 @@ int id image 0x7f050025
 int id left_icon 0x7f050031
 int id listMode 0x7f050001
 int id list_item 0x7f050027
+int id menu_view 0x7f050043
 int id middle 0x7f050012
 int id never 0x7f050009
 int id none 0x7f050010
@@ -353,6 +356,7 @@ int string app_name 0x7f0a000d
 int string hello_world 0x7f0a000e
 int style AppBaseTheme 0x7f0b007f
 int style AppTheme 0x7f0b0080
+int style MenuAnimationFade 0x7f0b0081
 int style TextAppearance_AppCompat_Base_CompactMenu_Dialog 0x7f0b0061
 int style TextAppearance_AppCompat_Base_SearchResult 0x7f0b0069
 int style TextAppearance_AppCompat_Base_SearchResult_Subtitle 0x7f0b006b

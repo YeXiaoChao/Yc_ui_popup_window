@@ -1,12 +1,17 @@
 package com.yanis.popup_window;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.View.OnKeyListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout.LayoutParams;
@@ -14,12 +19,14 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MainActivity extends Activity implements OnClickListener {
+public class MainActivity extends Activity implements OnClickListener,
+		OnKeyListener {
 	PopupWindow pop;
 	TextView hideView;
 	Button btnCancel;
 	ImageView btnNight, btnWord, btnExit;
 	View view;
+	boolean isOut, isIn;// 是否弹窗显示
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,25 +61,74 @@ public class MainActivity extends Activity implements OnClickListener {
 		btnWord.setOnClickListener(this);
 		btnExit.setOnClickListener(this);
 		btnCancel.setOnClickListener(this);
+		view.setFocusableInTouchMode(true);
+		view.setOnKeyListener(this);
 		// PopupWindow实例化
 		pop = new PopupWindow(view, LayoutParams.MATCH_PARENT,
 				LayoutParams.WRAP_CONTENT, true);
+		/**
+		 * PopupWindow 设置
+		 */
+		// pop.setFocusable(true); //设置PopupWindow可获得焦点
+		// pop.setTouchable(true); //设置PopupWindow可触摸
+		// pop.setOutsideTouchable(true); // 设置非PopupWindow区域可触摸
+		// 设置PopupWindow显示和隐藏时的动画
+		pop.setAnimationStyle(R.style.MenuAnimationFade);
+		/**
+		 * 改变背景可拉的弹出窗口。后台可以设置为null。 这句话必须有，否则按返回键popwindow不能消失 或者加入这句话
+		 * ColorDrawable dw = new
+		 * ColorDrawable(-00000);pop.setBackgroundDrawable(dw);
+		 */
+		pop.setBackgroundDrawable(new BitmapDrawable());
+
 	}
 
+	/**
+	 * 按钮点击事件监听
+	 * 
+	 * @param v
+	 */
 	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		if (pop.isShowing()) {
-			// 隐藏窗口，如果设置了点击窗口外消失，则不需要此方式隐藏
-			pop.dismiss();
-		} else {
-			// 显示窗口，位置为父容器底部
-			pop.showAtLocation(hideView, Gravity.BOTTOM, 0, 0);
+	public void onClick(View v) {
+		switch (v.getId()) {
+		case R.id.btnNight:
+			changePopupWindowState();
+			Toast.makeText(MainActivity.this, "你点击了夜间模式", Toast.LENGTH_SHORT)
+					.show();
+			break;
+		case R.id.btnWord:
+			changePopupWindowState();
+			Toast.makeText(MainActivity.this, "你点击了文本模式", Toast.LENGTH_SHORT)
+					.show();
+			break;
+		case R.id.btnExit:
+			exitTheDemo();
+			break;
+		case R.id.btnCancel:
+			changePopupWindowState();
+			break;
 		}
-		return super.onCreateOptionsMenu(menu);
 	}
 
-	@Override
-	public boolean onMenuOpened(int featureId, Menu menu) {
+	/**
+	 * 退出程序
+	 */
+	private void exitTheDemo() {
+		changePopupWindowState();
+		new AlertDialog.Builder(MainActivity.this).setMessage("确定退出这个 Demo 吗？")
+				.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						finish();
+					}
+				}).setNegativeButton("取消", null).show();
+	}
+
+	/**
+	 * 改变 PopupWindow 的显示和隐藏
+	 */
+	private void changePopupWindowState() {
 		if (pop.isShowing()) {
 			// 隐藏窗口，如果设置了点击窗口外消失，则不需要此方式隐藏
 			pop.dismiss();
@@ -80,39 +136,36 @@ public class MainActivity extends Activity implements OnClickListener {
 			// 弹出窗口显示内容视图,默认以锚定视图的左下角为起点，这里为点击按钮
 			pop.showAtLocation(hideView, Gravity.BOTTOM, 0, 0);
 		}
-		return super.onMenuOpened(featureId, menu);
 	}
 
+	// Called when a key was pressed down and not handled by any of the views
+	// inside of the activity
 	@Override
-	public void onClick(View v) {
-		switch (v.getId()) {
-		case R.id.btnNight:
-			closeThePopupWindow();
-			Toast.makeText(MainActivity.this, "你点击了夜间模式", Toast.LENGTH_SHORT)
-					.show();
-			break;
-		case R.id.btnWord:
-			closeThePopupWindow();
-			Toast.makeText(MainActivity.this, "你点击了文本模式", Toast.LENGTH_SHORT)
-					.show();
-			break;
-		case R.id.btnExit:
-			closeThePopupWindow();
-			finish();
-			break;
-		case R.id.btnCancel:
-			closeThePopupWindow();
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_MENU:// 菜单键监听
+			isOut = true;
+			changePopupWindowState();
 			break;
 		}
+		return super.onKeyDown(keyCode, event);
 	}
 
-	/**
-	 * 关闭 PopupWindow
-	 */
-	private void closeThePopupWindow() {
-		if (pop != null) {
-			pop.dismiss();
+	// Called when a hardware key is dispatched to a view.
+	@Override
+	public boolean onKey(View v, int keyCode, KeyEvent event) {
+		switch (keyCode) {
+		case KeyEvent.KEYCODE_MENU:
+			if (isOut && !isIn) {
+				isOut = false;
+				isIn = true;
+			} else if (!isOut && isIn) {
+				isIn = false;
+				changePopupWindowState();
+			}
+			break;
 		}
+		return false;
 	}
 
 }
